@@ -1,5 +1,7 @@
 package br.com.zupacademy.rodrigo.proposta.propsotas;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,19 +19,38 @@ import java.util.Optional;
 @RequestMapping("/proposta")
 public class PropostaController {
 
+    private final Logger logger = LoggerFactory.getLogger(PropostaController.class);
+
     @Autowired
     private PropostaRepository propostaRepository;
+
+    @Autowired
+    private SistemaDeDadosFinanceirosClient sistemaDeDadosFinanceirosClient;
 
     @PostMapping
     @Transactional
     public ResponseEntity<?> cadastra(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriBuilder) {
+
         Proposta proposta = propostaRequest.convertePropostaRequestParaProposta();
         Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(proposta.getDocumento());
         if (possivelProposta.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
         }
-        propostaRepository.save(proposta);
+
+        Proposta propostaSalva = propostaRepository.save(proposta);
+        logger.info("Proposta documento={} salário={} criada com sucesso!", propostaSalva.getDocumento(), propostaSalva.getSalario());
+
+        AnaliseSolicitacaoRequest analiseSolicitacaoRequest = new AnaliseSolicitacaoRequest(propostaSalva);
+
+        AnaliseSolicitacaoResponse analiseSolicitacaoResponse = sistemaDeDadosFinanceirosClient.status(analiseSolicitacaoRequest);
+        if (analiseSolicitacaoResponse.getResultadoSolicitacao().equals("COM_RESTRICAO")) {
+            propostaSalva.setStatus(StatusProposta.NAO_ELEGIVEL);
+        } else {
+            propostaSalva.setStatus(StatusProposta.ELEGIVEL);
+        }
+
+        Proposta propostaComStatus = propostaRepository.save(propostaSalva);
         URI uri = uriBuilder.path("/proposta/{id}").buildAndExpand(proposta.getId()).toUri();
-        return ResponseEntity.created(uri).body(new PropostaResponse(proposta));
+        return ResponseEntity.created(uri).body(new PropostaResponse(propostaComStatus));
     }
 }
