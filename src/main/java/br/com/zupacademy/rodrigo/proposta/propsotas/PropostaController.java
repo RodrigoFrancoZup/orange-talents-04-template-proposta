@@ -1,5 +1,6 @@
 package br.com.zupacademy.rodrigo.proposta.propsotas;
 
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +43,15 @@ public class PropostaController {
 
         AnaliseSolicitacaoRequest analiseSolicitacaoRequest = new AnaliseSolicitacaoRequest(propostaSalva);
 
-        AnaliseSolicitacaoResponse analiseSolicitacaoResponse = sistemaDeDadosFinanceirosClient.status(analiseSolicitacaoRequest);
-        if (analiseSolicitacaoResponse.getResultadoSolicitacao().equals("COM_RESTRICAO")) {
+        try {
+            AnaliseSolicitacaoResponse analiseSolicitacaoResponse = sistemaDeDadosFinanceirosClient.status(analiseSolicitacaoRequest);
+            if (analiseSolicitacaoResponse.getResultadoSolicitacao().equals("SEM_RESTRICAO")) {
+                propostaSalva.setStatus(StatusProposta.ELEGIVEL);
+            }
+        } catch (FeignException e) {
             propostaSalva.setStatus(StatusProposta.NAO_ELEGIVEL);
-        } else {
-            propostaSalva.setStatus(StatusProposta.ELEGIVEL);
         }
+
 
         Proposta propostaComStatus = propostaRepository.save(propostaSalva);
         URI uri = uriBuilder.path("/proposta/{id}").buildAndExpand(proposta.getId()).toUri();
