@@ -31,7 +31,7 @@ public class PropostaCartao {
                 proposta.setNumeroDoCartao(cartao.getId());
                 propostaRepository.save(proposta);
             } catch (Exception e) {
-                logger.info("A proposta {} não recebeu o cartão {}", proposta.getId());
+                logger.info("A proposta {} não recebeu o cartão", proposta.getId());
             }
         }
 
