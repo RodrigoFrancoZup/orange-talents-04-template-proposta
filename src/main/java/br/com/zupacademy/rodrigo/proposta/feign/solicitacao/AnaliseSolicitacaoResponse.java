@@ -1,4 +1,4 @@
-package br.com.zupacademy.rodrigo.proposta.propsotas;
+package br.com.zupacademy.rodrigo.proposta.feign.solicitacao;
 
 public class AnaliseSolicitacaoResponse {
 

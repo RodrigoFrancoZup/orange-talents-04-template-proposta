@@ -16,6 +16,7 @@ public class Proposta {
     private String nome;
     private String endereco;
     private BigDecimal salario;
+    private String numeroDoCartao;
 
     @Enumerated(EnumType.STRING)
     private StatusProposta status;
@@ -56,11 +57,13 @@ public class Proposta {
         return salario;
     }
 
-    public StatusProposta getStatus() {
-        return status;
-    }
+    public StatusProposta getStatus() { return status; }
+
+    public String getNumeroDoCartao() { return numeroDoCartao; }
 
     public void setStatus(StatusProposta status) {
         this.status = status;
     }
+
+    public void setNumeroDoCartao(String numeroDoCartao) { this.numeroDoCartao = numeroDoCartao;  }
 }

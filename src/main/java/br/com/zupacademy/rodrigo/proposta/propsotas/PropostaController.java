@@ -1,5 +1,8 @@
 package br.com.zupacademy.rodrigo.proposta.propsotas;
 
+import br.com.zupacademy.rodrigo.proposta.feign.solicitacao.AnaliseSolicitacaoRequest;
+import br.com.zupacademy.rodrigo.proposta.feign.solicitacao.AnaliseSolicitacaoResponse;
+import br.com.zupacademy.rodrigo.proposta.feign.solicitacao.SistemaDeDadosFinanceirosClient;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
