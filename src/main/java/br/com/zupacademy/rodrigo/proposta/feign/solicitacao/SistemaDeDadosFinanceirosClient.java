@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "sistemaDeDadosFinanceiros", url = "http://localhost:9999")
+@FeignClient(name = "sistemaDeDadosFinanceiros", url = "${financeiro.host}")
 public interface SistemaDeDadosFinanceirosClient {
 
     @RequestMapping(method = RequestMethod.POST, value = "/api/solicitacao")

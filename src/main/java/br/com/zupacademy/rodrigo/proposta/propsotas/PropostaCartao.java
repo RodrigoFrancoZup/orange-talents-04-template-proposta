@@ -2,7 +2,6 @@ package br.com.zupacademy.rodrigo.proposta.propsotas;
 
 import br.com.zupacademy.rodrigo.proposta.feign.cartao.CartaoClient;
 import br.com.zupacademy.rodrigo.proposta.feign.cartao.CartaoResponse;
-import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +27,14 @@ public class PropostaCartao {
         for (Proposta proposta : propostasSemCartao) {
             try {
                 CartaoResponse cartao = cartaoClient.buscaCartao(proposta.getId());
-                logger.info("A proposta {} recebeu o cartão {}", proposta.getId() ,cartao.getId());
+                logger.info("A proposta {} recebeu o cartão {}", proposta.getId(), cartao.getId());
                 proposta.setNumeroDoCartao(cartao.getId());
                 propostaRepository.save(proposta);
-            }catch (FeignException e){
-                logger.info("A proposta{} ainda não tem cartão", proposta.getId());
+            } catch (Exception e) {
+                logger.info("A proposta {} não recebeu o cartão {}", proposta.getId());
             }
         }
+
     }
 
 }
