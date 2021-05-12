@@ -12,7 +12,6 @@ public interface PropostaRepository extends JpaRepository<Proposta, Long> {
 
     public Optional<Proposta> findByDocumento(String documento);
 
-    //@Query("SELECT p from Proposta p WHERE p.status = 'ELEGIVEL' AND p.numeroDoCartao = NULL")
-    @Query("SELECT p from Proposta p WHERE  p.numeroDoCartao = NULL")
+    @Query("SELECT p from Proposta p WHERE p.status = 'ELEGIVEL' AND p.numeroDoCartao = NULL")
     public List<Proposta> buscaPropostasElegiveisSemCartao();
 }

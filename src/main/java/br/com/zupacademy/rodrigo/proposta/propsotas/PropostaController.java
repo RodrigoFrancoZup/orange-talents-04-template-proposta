@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
@@ -59,5 +56,15 @@ public class PropostaController {
         Proposta propostaComStatus = propostaRepository.save(propostaSalva);
         URI uri = uriBuilder.path("/proposta/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity.created(uri).body(new PropostaResponse(propostaComStatus));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> detalhe(@PathVariable Long id) {
+        Optional<Proposta> propsotaPossivel = propostaRepository.findById(id);
+        if (propsotaPossivel.isPresent()) {
+            return ResponseEntity.ok(new PropostaResponse(propsotaPossivel.get()));
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 }

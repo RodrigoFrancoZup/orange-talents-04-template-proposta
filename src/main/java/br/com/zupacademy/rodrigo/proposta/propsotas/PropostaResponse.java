@@ -11,6 +11,7 @@ public class PropostaResponse {
     private String endereco;
     private BigDecimal salario;
     private StatusProposta status;
+    private String numeroCartao;
 
     public PropostaResponse(Proposta proposta) {
         this.id = proposta.getId();
@@ -20,6 +21,7 @@ public class PropostaResponse {
         this.endereco = proposta.getEndereco();
         this.salario = proposta.getSalario();
         this.status = proposta.getStatus();
+        this.numeroCartao = proposta.getNumeroDoCartao();
     }
 
     public Long getId() {
@@ -48,5 +50,9 @@ public class PropostaResponse {
 
     public StatusProposta getStatus() {
         return status;
+    }
+
+    public String getNumeroCartao() {
+        return numeroCartao;
     }
 }
