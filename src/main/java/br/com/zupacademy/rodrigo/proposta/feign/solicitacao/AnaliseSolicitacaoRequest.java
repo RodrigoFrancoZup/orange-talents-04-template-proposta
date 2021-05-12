@@ -1,6 +1,6 @@
 package br.com.zupacademy.rodrigo.proposta.feign.solicitacao;
 
-import br.com.zupacademy.rodrigo.proposta.propsotas.Proposta;
+import br.com.zupacademy.rodrigo.proposta.propostas.Proposta;
 
 public class AnaliseSolicitacaoRequest {
 

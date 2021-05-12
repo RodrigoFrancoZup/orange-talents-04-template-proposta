@@ -1,4 +1,6 @@
-package br.com.zupacademy.rodrigo.proposta.propsotas;
+package br.com.zupacademy.rodrigo.proposta.propostas;
+
+import br.com.zupacademy.rodrigo.proposta.cartoes.Cartao;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -16,10 +18,13 @@ public class Proposta {
     private String nome;
     private String endereco;
     private BigDecimal salario;
-    private String numeroDoCartao;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Cartao cartao;
+
 
     @Enumerated(EnumType.STRING)
-    private StatusProposta status;
+    private StatusProposta status = StatusProposta.EM_ANALISE;
 
     @Deprecated
     public Proposta() {
@@ -59,11 +64,15 @@ public class Proposta {
 
     public StatusProposta getStatus() { return status; }
 
-    public String getNumeroDoCartao() { return numeroDoCartao; }
+    public Cartao getCartao() {
+        return cartao;
+    }
 
     public void setStatus(StatusProposta status) {
         this.status = status;
     }
 
-    public void setNumeroDoCartao(String numeroDoCartao) { this.numeroDoCartao = numeroDoCartao;  }
+    public void setCartao(Cartao cartao) {
+        this.cartao = cartao;
+    }
 }

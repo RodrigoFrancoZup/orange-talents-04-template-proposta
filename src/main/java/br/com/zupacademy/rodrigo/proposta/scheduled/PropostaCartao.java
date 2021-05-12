@@ -1,7 +1,10 @@
-package br.com.zupacademy.rodrigo.proposta.propsotas;
+package br.com.zupacademy.rodrigo.proposta.scheduled;
 
+import br.com.zupacademy.rodrigo.proposta.cartoes.Cartao;
 import br.com.zupacademy.rodrigo.proposta.feign.cartao.CartaoClient;
-import br.com.zupacademy.rodrigo.proposta.feign.cartao.CartaoResponse;
+import br.com.zupacademy.rodrigo.proposta.feign.cartao.CartaoResponseConsultaExterna;
+import br.com.zupacademy.rodrigo.proposta.propostas.Proposta;
+import br.com.zupacademy.rodrigo.proposta.propostas.PropostaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +29,10 @@ public class PropostaCartao {
         List<Proposta> propostasSemCartao = propostaRepository.buscaPropostasElegiveisSemCartao();
         for (Proposta proposta : propostasSemCartao) {
             try {
-                CartaoResponse cartao = cartaoClient.buscaCartao(proposta.getId());
-                logger.info("A proposta {} recebeu o cartão {}", proposta.getId(), cartao.getId());
-                proposta.setNumeroDoCartao(cartao.getId());
+                CartaoResponseConsultaExterna cartaoResponseConsultaExterna = cartaoClient.buscaCartao(proposta.getId());
+                logger.info("A proposta {} recebeu o cartão {}", proposta.getId(), cartaoResponseConsultaExterna.getId());
+                Cartao cartao = cartaoResponseConsultaExterna.converteParaCartao(proposta);
+                proposta.setCartao(cartao);
                 propostaRepository.save(proposta);
             } catch (Exception e) {
                 logger.info("A proposta {} não recebeu o cartão", proposta.getId());

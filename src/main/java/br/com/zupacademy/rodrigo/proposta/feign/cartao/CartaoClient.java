@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface CartaoClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/api/cartoes")
-    public CartaoResponse buscaCartao(@RequestParam(value = "idProposta") Long id );
+    public CartaoResponseConsultaExterna buscaCartao(@RequestParam(value = "idProposta") Long id );
 }

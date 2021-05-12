@@ -1,4 +1,4 @@
-package br.com.zupacademy.rodrigo.proposta.propsotas;
+package br.com.zupacademy.rodrigo.proposta.propostas;
 
 import org.hibernate.validator.constraints.Length;
 

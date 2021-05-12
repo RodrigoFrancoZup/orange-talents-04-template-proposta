@@ -1,4 +1,4 @@
-package br.com.zupacademy.rodrigo.proposta.propsotas;
+package br.com.zupacademy.rodrigo.proposta.propostas;
 
 import java.math.BigDecimal;
 
@@ -21,7 +21,10 @@ public class PropostaResponse {
         this.endereco = proposta.getEndereco();
         this.salario = proposta.getSalario();
         this.status = proposta.getStatus();
-        this.numeroCartao = proposta.getNumeroDoCartao();
+        this.numeroCartao = null;
+        if (proposta.getCartao() != null) {
+            this.numeroCartao = proposta.getCartao().getId();
+        }
     }
 
     public Long getId() {
