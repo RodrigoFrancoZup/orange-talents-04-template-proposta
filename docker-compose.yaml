@@ -2,6 +2,31 @@
 
 version: '3'
 services:
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: proposta
+    ports:
+      - "3307:3306"
+
+  proposta:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: rodrigofrancozup/proposta
+    container_name: proposta
+    ports:
+      - "8081:8080"
+    depends_on:
+      - "mysql"
+    restart: always
+    environment:
+      MYSQL_URL: jdbc:mysql://mysql:3306/proposta
+      CONTAS_URL: contas:8888
+      ANALISE_URL: analise:9999
 
   zookeeper:
     image: "confluentinc/cp-zookeeper:5.2.1"
@@ -74,6 +99,7 @@ services:
       URL_SISTEMA_CARTAO: http://contas:8888/api/cartoes
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
 
+
   contas:
     image: 'zupacademy/contas'
     ports:
@@ -82,6 +108,7 @@ services:
       SERVER_PORT: 8888
       LOG_LEVEL: INFO
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+
 
   transacoes:
     image: 'zupacademy/transacoes'
