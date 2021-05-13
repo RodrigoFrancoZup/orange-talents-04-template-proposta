@@ -1,11 +1,14 @@
 package br.com.zupacademy.rodrigo.proposta.cartoes;
 
+import br.com.zupacademy.rodrigo.proposta.biometrias.Biometria;
 import br.com.zupacademy.rodrigo.proposta.propostas.Proposta;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Cartao {
@@ -17,6 +20,9 @@ public class Cartao {
 
     @OneToOne(mappedBy = "cartao")
     private Proposta proposta;
+
+    @OneToMany(mappedBy = "cartao")
+    private List<Biometria> biometrias;
 
     @Deprecated
     public Cartao() {
