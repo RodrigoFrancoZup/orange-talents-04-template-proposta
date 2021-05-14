@@ -3,10 +3,7 @@ package br.com.zupacademy.rodrigo.proposta.cartoes;
 import br.com.zupacademy.rodrigo.proposta.biometrias.Biometria;
 import br.com.zupacademy.rodrigo.proposta.propostas.Proposta;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,6 +14,9 @@ public class Cartao {
     private String id;
     private String titular;
     private LocalDateTime criadoEm;
+
+    @Enumerated(EnumType.STRING)
+    private StatusCartao status;
 
     @OneToOne(mappedBy = "cartao")
     private Proposta proposta;
@@ -35,6 +35,10 @@ public class Cartao {
         this.proposta = proposta;
     }
 
+    public void bloqueiaCartao() {
+        this.status = StatusCartao.BLOQUEADO;
+    }
+
     public String getId() {
         return id;
     }
@@ -49,5 +53,9 @@ public class Cartao {
 
     public Proposta getProposta() {
         return proposta;
+    }
+
+    public StatusCartao getStatus() {
+        return status;
     }
 }
