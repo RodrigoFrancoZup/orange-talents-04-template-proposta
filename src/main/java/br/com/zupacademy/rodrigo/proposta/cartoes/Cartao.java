@@ -2,6 +2,7 @@ package br.com.zupacademy.rodrigo.proposta.cartoes;
 
 import br.com.zupacademy.rodrigo.proposta.biometrias.Biometria;
 import br.com.zupacademy.rodrigo.proposta.propostas.Proposta;
+import br.com.zupacademy.rodrigo.proposta.viagem.AvisoViagem;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,6 +24,9 @@ public class Cartao {
 
     @OneToMany(mappedBy = "cartao")
     private List<Biometria> biometrias;
+
+    @OneToMany(mappedBy = "cartao")
+    private List<AvisoViagem> avisosDeViagem;
 
     @Deprecated
     public Cartao() {
