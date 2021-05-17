@@ -3,6 +3,7 @@ package br.com.zupacademy.rodrigo.proposta.propostas;
 import br.com.zupacademy.rodrigo.proposta.feign.solicitacao.AnaliseSolicitacaoRequest;
 import br.com.zupacademy.rodrigo.proposta.feign.solicitacao.AnaliseSolicitacaoResponse;
 import br.com.zupacademy.rodrigo.proposta.feign.solicitacao.SistemaDeDadosFinanceirosClient;
+import br.com.zupacademy.rodrigo.proposta.spring.metricas.MinhasMetricas;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ public class PropostaController {
 
     @Autowired
     private SistemaDeDadosFinanceirosClient sistemaDeDadosFinanceirosClient;
+
+    @Autowired
+    private MinhasMetricas minhasMetricas;
 
     @PostMapping
     @Transactional
@@ -54,12 +58,14 @@ public class PropostaController {
 
 
         Proposta propostaComStatus = propostaRepository.save(propostaSalva);
+        minhasMetricas.meuContador();
         URI uri = uriBuilder.path("/proposta/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity.created(uri).body(new PropostaResponse(propostaComStatus));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> detalhe(@PathVariable Long id) {
+        minhasMetricas.meuTimer();
         Optional<Proposta> propsotaPossivel = propostaRepository.findById(id);
         if (propsotaPossivel.isPresent()) {
             return ResponseEntity.ok(new PropostaResponse(propsotaPossivel.get()));
