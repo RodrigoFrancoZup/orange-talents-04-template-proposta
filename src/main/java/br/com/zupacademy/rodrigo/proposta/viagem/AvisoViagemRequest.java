@@ -31,6 +31,22 @@ public class AvisoViagemRequest {
         return new AvisoViagem(this.destinoViagem, this.dataTermino, this.ipClient, this.userAgent, cartao);
     }
 
+    public String getDestinoViagem() {
+        return destinoViagem;
+    }
+
+    public LocalDate getDataTermino() {
+        return dataTermino;
+    }
+
+    public String getIpClient() {
+        return ipClient;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
     public void setIpClient(String ipClient) {
         this.ipClient = ipClient;
     }

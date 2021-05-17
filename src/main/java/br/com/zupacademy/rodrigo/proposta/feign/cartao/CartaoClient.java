@@ -12,4 +12,7 @@ public interface CartaoClient {
 
     @PostMapping("/api/cartoes/{id}/bloqueios")
     public BloqueioCartaoResponseExterno bloqueiaCartao(@PathVariable String id, BloqueioCartaoRequestExterno bloqueioCartaoRequestExterno);
+
+    @PostMapping("/api/cartoes/{id}/avisos")
+    public ViagemResponseExterno avisaViagem(@PathVariable String id, ViagemRequestExterno viagemRequestExterno);
 }
