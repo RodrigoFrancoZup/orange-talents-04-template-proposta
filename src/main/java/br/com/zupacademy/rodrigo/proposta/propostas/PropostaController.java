@@ -5,6 +5,9 @@ import br.com.zupacademy.rodrigo.proposta.feign.solicitacao.AnaliseSolicitacaoRe
 import br.com.zupacademy.rodrigo.proposta.feign.solicitacao.SistemaDeDadosFinanceirosClient;
 import br.com.zupacademy.rodrigo.proposta.spring.metricas.MinhasMetricas;
 import feign.FeignException;
+
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ public class PropostaController {
 
     private final Logger logger = LoggerFactory.getLogger(PropostaController.class);
 
+    private final Tracer tracer;
+
     @Autowired
     private PropostaRepository propostaRepository;
 
@@ -32,9 +37,19 @@ public class PropostaController {
     @Autowired
     private MinhasMetricas minhasMetricas;
 
+    public PropostaController(Tracer tracer) {
+        this.tracer = tracer;
+    }
+
     @PostMapping
     @Transactional
     public ResponseEntity<?> cadastra(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriBuilder) {
+        Span activeSpan = tracer.activeSpan();
+        activeSpan.setTag("user.email", propostaRequest.getEmail());
+
+        activeSpan.setBaggageItem("user.email", propostaRequest.getEmail());
+
+        activeSpan.log("Meu log personalizado - Rodrigo");
 
         Proposta proposta = propostaRequest.convertePropostaRequestParaProposta();
         Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(proposta.getDocumento());

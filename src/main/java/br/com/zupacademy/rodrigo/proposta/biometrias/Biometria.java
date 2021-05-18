@@ -2,8 +2,8 @@ package br.com.zupacademy.rodrigo.proposta.biometrias;
 
 import br.com.zupacademy.rodrigo.proposta.cartoes.Cartao;
 
+
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity

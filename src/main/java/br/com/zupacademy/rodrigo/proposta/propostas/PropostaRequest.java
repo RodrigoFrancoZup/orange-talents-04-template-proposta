@@ -39,4 +39,8 @@ public class PropostaRequest {
     public Proposta convertePropostaRequestParaProposta(){
         return new Proposta(this.documento, this.email, this.nome, this.endereco, this.salario);
     }
+
+    public String getEmail() {
+        return email;
+    }
 }

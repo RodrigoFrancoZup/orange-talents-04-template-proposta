@@ -3,9 +3,10 @@ package br.com.zupacademy.rodrigo.proposta.carteira;
 import br.com.zupacademy.rodrigo.proposta.cartoes.Cartao;
 import br.com.zupacademy.rodrigo.proposta.cartoes.CartaoRepository;
 import br.com.zupacademy.rodrigo.proposta.feign.cartao.CartaoClient;
-import br.com.zupacademy.rodrigo.proposta.feign.cartao.CartaoResponseConsultaExterna;
+
 import br.com.zupacademy.rodrigo.proposta.feign.cartao.CarteiraRequestExterno;
 import br.com.zupacademy.rodrigo.proposta.feign.cartao.CarteiraResponseExterno;
+
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
