@@ -15,4 +15,7 @@ public interface CartaoClient {
 
     @PostMapping("/api/cartoes/{id}/avisos")
     public ViagemResponseExterno avisaViagem(@PathVariable String id, ViagemRequestExterno viagemRequestExterno);
+
+    @PostMapping("/api/cartoes/{id}/carteiras")
+    public CarteiraResponseExterno  associaCartaoCarteira(@PathVariable String id, CarteiraRequestExterno  carteiraRequestExterno);
 }

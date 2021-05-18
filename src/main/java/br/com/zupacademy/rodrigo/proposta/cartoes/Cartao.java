@@ -1,6 +1,8 @@
 package br.com.zupacademy.rodrigo.proposta.cartoes;
 
 import br.com.zupacademy.rodrigo.proposta.biometrias.Biometria;
+import br.com.zupacademy.rodrigo.proposta.carteira.Carteira;
+import br.com.zupacademy.rodrigo.proposta.carteira.TipoCarteira;
 import br.com.zupacademy.rodrigo.proposta.propostas.Proposta;
 import br.com.zupacademy.rodrigo.proposta.viagem.AvisoViagem;
 
@@ -28,6 +30,9 @@ public class Cartao {
     @OneToMany(mappedBy = "cartao")
     private List<AvisoViagem> avisosDeViagem;
 
+    @OneToMany(mappedBy = "cartao")
+    private List<Carteira> carteiras;
+
     @Deprecated
     public Cartao() {
     }
@@ -41,6 +46,15 @@ public class Cartao {
 
     public void bloqueiaCartao() {
         this.status = StatusCartao.BLOQUEADO;
+    }
+
+    public Boolean verificaSeJaEhAssociado(TipoCarteira tipoCarteira){
+        for(Carteira aux : carteiras){
+            if(aux.getCarteira().equals(tipoCarteira)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getId() {
