@@ -1,0 +1,20 @@
+⦁	Basta criar uma interface com nome @Documento, ela vai ficar assim:
+
+@CPF
+@CNPJ
+@ConstraintComposition(CompositionType.OR)
+@ReportAsSingleViolation
+@Constraint(validatedBy = {})
+@Documented
+@Target({FIELD})
+@Retention(RUNTIME)
+public @interface Documento {
+    
+    String message() default "Documento inválido!";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
+}
+
+⦁	Agora podemos usar @Documento em cima do atributo que quero validar.

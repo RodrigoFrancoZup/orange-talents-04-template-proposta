@@ -1,0 +1,3 @@
+Jager = Gerencia os sistemas distribuídos, com ele posso propagar metadados entre os serviços e ver de fato qual serviço falhou;
+Prometheus =  Esse irá coletar as métricas do sistema, poderá salvá-las também.
+Grafana = Foi utilizado para criar gráficos em cima das métricas coletadas pelo Prometheus.

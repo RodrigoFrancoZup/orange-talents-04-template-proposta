@@ -1,0 +1,48 @@
+⦁	Primeiro passo foi por a dependencia do Jaeger no projeto (arquivo pom.xml):
+    <dependency>
+		<groupId>io.opentracing.contrib</groupId>
+		<artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>
+		<version>3.2.2</version>
+</dependency>
+
+⦁	Configurá-lo no arquivo application.properties (vamos usar a Spring Expression Language para definir o valor fixo ou aceitar por váriavel de ambiente de quem executa a aplicação):
+
+# Jaeger - Habilita ou não
+opentracing.jaeger.enabled=${JAEGER_ENABLED:true}
+
+# Jaeger - Nome do serviço
+opentracing.jaeger.service-name=${spring.application.name}
+
+# Jaeger - Endereço para enviar os metadados (trace, span, etc)
+opentracing.jaeger.http-sender.url=${JAEGER_ENDPOINT:http://localhost:14268/api/traces}
+
+# Jaeger - Tipo de amostragem (probabilístico) e sua configuração (1 = 100%)
+opentracing.jaeger.probabilistic-sampler.sampling-rate=${JAEGER_SAMPLER:1}
+
+⦁	Atenção: Se a sua aplicação estiver travada no log "Triggering deferred initialization of Spring Data repositories…", por favor, desabilite a configuração de OpenTracing para JDBC adicionando a seguinte propriedade: 
+opentracing.spring.cloud.jdbc.enabled=false
+
+⦁	Acessar http://localhost:16686/search e em service colocar o nome da aplicação e clicar nos Spans que estão surgindo.
+
+⦁	Criando uma tag personalizada (Para ver resultado basta entrar no Span e ver a seção TAG):
+1) Criar o atributo private final Tracer tracer na classe PropostaController;
+2) No construtor da classe instanciar o objeto;
+
+public PropostaController(Tracer tracer) {
+    this.tracer = tracer;
+}
+
+3)No metodo cadastra chamar o Span atraves do Tracer, e no Span colocar uma tag:
+Span activeSpan = tracer.activeSpan();
+activeSpan.setTag("user.email", propostaRequest.getEmail());
+
+⦁	Criando um BaggageItem (Esse indicador vai passar de serviço para serviço, por exemplo: CadastroDeProposta -> AnaliseFinanceira - Poderemos ver nesses dois serviços o indicador BaggageItem (O resultado ficará em LOG, tem que entrar no Span):
+1) Basta escrever o código no metodo Cadastra o trecho: 
+activeSpan.setBaggageItem("user.email", propostaRequest.getEmail());
+2) No serviço analiseFinanceira teria que ter o trecho:
+Span activeSpan = tracer.activeSpan();
+String userEmail = activeSpan.getBaggageItem("user.email");
+activeSpan.setBaggageItem("user.email", userEmail);
+
+⦁	Criar um log personalizado, basta digitar o trecho dentro do metodo cadastra() - O resultado fica na seção de Log:
+activeSpan.log("Meu log");

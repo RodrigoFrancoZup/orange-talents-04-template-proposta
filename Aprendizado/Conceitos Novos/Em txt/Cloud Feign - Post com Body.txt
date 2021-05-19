@@ -1,0 +1,43 @@
+Nesse projetos usamos o Cloud Feign para fazer noss API requisitar serviços externos (nossa API vira cliente de outras API's):
+
+⦁	Vamos consultar o serviço localhost:9999/api/solicitacao, com o body (exemplo): 
+	{ 
+		"documento": "33333333333", 
+		"nome": "Rodrigo", 
+		"idProposta": "2" 
+	}
+
+⦁	Para isso ser possível devemos:
+Adicionar a dependência no arquivo pom.xml - essa dependencia exegie os 3 blocos de código abaixo (usando spring boot 2.3.3): 							<dependency>										<groupId>org.springframework.cloud</groupId>				<artifactId>spring-cloud-starter-openfeign</artifactId>	</dependency>																		 <dependencyManagement>						<dependencies>									<dependency>									<groupId>org.springframework.cloud</groupId>				<artifactId>spring-cloud-dependencies</artifactId>				<version>${spring-cloud.version}</version>					<type>pom</type>								<scope>import</scope>							</dependency>							</dependencies>			                      </dependencyManagement>
+
+
+<properties>
+	<java.version>11</java.version> = ESSA LINHA JÁ TEMOS, POR SÓ:
+	<spring-cloud.version>Hoxton.SR11</spring-cloud.version>
+</properties>
+
+
+1.	Anotar a classe principal (com método main) com @EnableFeignClients;
+2.	Criar uma interface que "fará" a requisição:  													   @FeignClient(name = "sistemaDeDadosFinanceiros", url = "http://localhost:9999") public interface SistemaDeDadosFinanceirosClient { 	  										 @RequestMapping(method = RequestMethod.POST, value = "/api/solicitacao") @Headers("Content-Type: application/json") 				                public AnaliseSolicitacaoResponse status(AnaliseSolicitacaoRequest analiseSolicitacaoRequest);							       }
+Aqui temos: @FeignCliente, com essa anotação demos um nome ao cliente que irá fazer a requsição (pode ser usado no balanceamento de carga) e temos a URL base a ser consultada. @RequestMapping indica o verbo que fazemos usar na requisição e o restante da URL do serviço. No @Header indicamos o que estamos usando, XML, JSON, etc. Ao analisar o método temos o seguinte, o seu retorno será o retorno da API que vamos consultar, e os parâmetros é o body (corpo) que vamos enviar para API. Neste caso enviamos um AnaliseSolicitacaoRequest e o retorno da api caiu no objeto AnaliseSolicitacaoResponse.
+
+⦁	O trecho de código para usar esse cliente (ficou na classe PropostaController): 
+	//Declaração de atributos
+	@Autorwired 
+	SistemaDeDadosFinanceirosClient sistemaDeDadosFinanceirosClient
+	//Restante do código
+	AnaliseSolicitacaoResponse analiseSolicitacaoResponse = 	sistemaDeDadosFinanceirosClient.status(analiseSolicitacaoRequest);
+
+⦁	Ao usar o feign podemos ter exceptions, no caso FeignClientException (erro 4xx), FeignServerException (erro 5xx), e a genérica que é FeignException. Podemos pegar o body dessas excpetion, método para isso é o content;
+
+⦁	Toda execução externa deve ter um tempo máximo de resposta (aqui estamos falando do Feign, mas o Hibernate também tem essa config.), podemos indicar esse tempo de espera máximo colocando os comando abaixo no arquivo application.properties:
+# Nas cfg de timeout não esqueça de nomear qual Bean terá o tempo 
+# Agora toda comunicação feita através do Feign, para aquele bean específico, o tempo máximo de espera da resposta vai ser de 100 milisegundos. 
+feign.client.config.sistemaDeDadosFinanceirosClient.read-timeout=100 
+# Tempo máximo para conseguir realizar a conexão com o outro sistema: 
+feign.client.config.sistemaDeDadosFinanceirosClient.connect-timeout=100 
+# A combinação acima leva a uma espera máxima de 200 milisegundos
+	
+⦁	Obs:  No lugar do @RequestMapping poderiamos usar o @Postmapping("/api/solicitacao") 
+
+⦁	O objeto que é passado como parâmetro (REQUEST EXTERNO), nesse caso foi o  AnaliseSolicitacaoRequest, tem que ter os métodos getters()! Sem eles o serviço que vai receber não conseguirá desserializar o json.

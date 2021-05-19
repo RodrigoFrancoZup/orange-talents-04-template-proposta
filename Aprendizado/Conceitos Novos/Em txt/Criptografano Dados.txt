@@ -1,0 +1,17 @@
+⦁	Utilizei o site: https://docs.spring.io/spring-security/site/docs/5.0.x/reference/html/crypto.html para obrter informações;
+
+⦁	Na classe Proposta, criei o método: 
+public void criptografiaDoDocumento(){
+    TextEncryptor encryptor = Encryptors.queryableText("senha123", "5c0744940b5c369c");
+    String documentoProtegido = encryptor.encrypt(this.documento);
+    this.documento = documentoProtegido;
+}
+
+⦁	Na classe AnaliseSolicitacaoRequest, criei o método:
+public void descriptografiaDocumento() {
+    TextEncryptor encryptor = Encryptors.queryableText("senha123", "5c0744940b5c369c");
+    String documentoDesprotegido = encryptor.decrypt(this.documento);
+    this.documento = documentoDesprotegido;
+}
+
+⦁	O ideal é deixar os valores senha123 e 5c0744940b5c369c em variaveis de ambiente, no arquivo application.properties. Mas ainda não consegui isso ainda, pois a injeção desses valores só funcionam em classe gerenciada pelo Spring.

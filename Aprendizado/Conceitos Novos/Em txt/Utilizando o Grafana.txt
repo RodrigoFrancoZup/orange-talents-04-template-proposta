@@ -1,0 +1,16 @@
+⦁	Utilizando o Grafana, esta é uma ferramenta bastante importante em um ambiente de aplicações distribuídas, ele nos ajuda a mostrar nossas métricas de uma maneira mais organizada e simples de visualizar;
+
+⦁	Temos o serviço Grafana rodando no nosso Docker-compose;
+
+⦁	Vamos acessar o Granafa em http://localhost:3000/ e poderemos criar nosso graficos de metricas
+
+⦁	A primeira senha é: admin/admin depois vou mudar para admin/rodrigo123
+
+⦁	Agora vamos configurar:
+1.	Criar um datasource no grafana. Podemos ir no simblo de engrenagem -> Data Sources -> Clicar em Prometheus -> Colocar em URL o http://localhot:9090 e ligar o Basic auth (vamos ter que criar um senha, vai aparecer uma janeliha em baixo para isso) -> Save;
+2.	Ir no simbolo + (no menu lateral) -> Import -> Colocar o json que nos foi disponibilizado (salve esse no arquivo dashoboard-grafana.json na raiz do projeto);
+3.	Clicar no botão load
+4.	Nessa tela poderemos dar um nome para nosso Dashboard, podemos deixar folder em General, deixar o UID em spring_boot_21 e a opção Prometheus em Prometheus (nosso data source) -> clicar em Import
+
+⦁	Links para documentação basica grafana: https://grafana.com/docs/grafana/latest/getting-started/getting-started/
+⦁	Links para Dashboards prontos (modelos): https://grafana.com/grafana/dashboards

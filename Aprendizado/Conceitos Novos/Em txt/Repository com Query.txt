@@ -1,0 +1,3 @@
+⦁	Um exemplo de query no Repository, no caso PropostaRepository:
+@Query("SELECT p from Proposta p WHERE p.status = 'ELEGIVEL' AND p.numeroDoCartao = NULL") 
+public List<Proposta> buscaPropostasElegiveisSemCartao();

@@ -1,0 +1,16 @@
+⦁	Aqui uso um client do Feign com RequestParam (ex: localhost:8080/livro?nomeAutor=Rodrigo):
+
+@FeignClient(name = "cartoes", url = "http://localhost:8888") 
+public interface CartaoClient { 
+
+@RequestMapping(method = RequestMethod.GET, value = "/api/cartoes") 
+public CartaoResponse buscaCartao(@RequestParam(value = "idProposta") Long id ); 
+
+}
+
+OU -- A de baixo tem que confirmar se funciona, fiquei com dúvidas
+
+@RequestMapping(method = RequestMethod.GET, value = "/api/cartoes?idProposta={idProposta}") 
+public CartaoResponse buscaCartao(@RequestParam(value = "idProposta") Long id );
+ }
+

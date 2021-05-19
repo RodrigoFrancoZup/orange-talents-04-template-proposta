@@ -1,0 +1,25 @@
+
+⦁	Consiste em aplicar uma condicional (if) nas váriaveis indicadas no arquivo application.properties, por exemplo as váriaveis de endereço de serviço externo para os Clients do Feign, ou então endereço do banco de dados;
+
+⦁	Exemplo:
+spring.datasource.url=${MYSQL_URL:jdbc:mysql://localhost/proposta}
+
+Nesse caso temos a variavel spring.datasource.url. Essa variável porderá ter dois valores, o valor de variavel de ambiente MYSQL_URL (Alguém tem que passar esse valor ao executar a aplicação, por exemplo um container do docker) ou então se ninguem passar nada o valor padrão será jdbc:mysql://localhost/proposta
+
+⦁	Exemplo do container docker passando esse valor de variavel de ambiente:
+
+proposta:
+  build:
+    dockerfile: Dockerfile
+    context: .
+  image: rodrigofrancozup/proposta
+  container_name: proposta
+  ports:
+    - "8081:8080"
+  depends_on:
+    - "mysql"
+  restart: always
+  environment:
+    MYSQL_URL: jdbc:mysql://mysql:3306/proposta
+    CONTAS_URL: contas:8888
+    ANALISE_URL: analise:9999

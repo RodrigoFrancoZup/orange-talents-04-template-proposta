@@ -1,0 +1,11 @@
+Para agendarmos uma tarefa, precisamos fazer:
+
+⦁	Configurar o Spring, no caso basta anotar a classe principal com: @EnableScheduling
+
+⦁	O método que você quer executar em intervalo de tempo - desa maneira ele é executado a primeira vez quando o servidor é levantado e depois no intervalo de tempo:  @Scheduled(fixedDelay = 10000)
+
+⦁	A classe que tem esse método deve ser anotada com @Componente
+
+Agendar agora indicando dia e hora:
+⦁	O método que você quer executar em intervalo com expression cron:  @Scheduled(cron = "* * * * *")
+⦁	Há sites como o : https://www.freeformatter.com/cron-expression-generator-quartz.html que geram esse parametro para nós, pois é dificil lembrar... cada * indica uma coisa...

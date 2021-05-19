@@ -1,0 +1,5 @@
+⦁	Estavamos abrindo uma transação pra cada método que altera o banco de dados, mas pensa comigo, se em algum desses métodos fizermos uma requisição a outra API (consultando serviço externo) e esse método tiver em uma trnasação a mesma ficará abaerta até concluirmos todo o método - isso inclui o serviço externo responder. Isso é péssimo ,pois não sabemos quando o serviço externo vai responder;
+
+⦁	Mesmo sem anotar os metodos com @Transactional todos os método executados por um repository são @Transactional, ou seja, eles abrem um transação. Desabilitamos isso com a anotação @EnableJpaRepositories(enableDefaultTransactions = false) em cima da classe principal (com método main);
+
+⦁	Com anotação do item anterior teremos que colocar @Transactional em todo método que necessite de uma transação, caso contrário teremos um exception;

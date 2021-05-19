@@ -1,0 +1,12 @@
+⦁	Quando criamos um recurso o recomendável é que o retorno seja o status 201 (created) juntamente com o link que identifica esse novo recurso. Podemos usar o URI builder para isso;
+
+⦁	Podemos criar a URI enderco = new URI ("http://localhost:8080/proposta") e depois juntar o id. Essa maneira não é a melhor;
+
+⦁	Outra maneira é no parâmetro do método cadastra(), que foi anotado com @PostMapping acrescentar o objeto UriComponentsBuilder uriBuilder. Esse componente vai tirar a responsabilidade de digitarmos "http://localhost:8080", pois ele já sabe qual é abase da URI (pois para se chegar no método cadastra() o cliente ja teve que digitar a base) ou seja, o endereço do servidor pode mudar que a aplicação não quebra, só precisamos montar o restante da URI:
+
+	@PostMapping 
+	public ResponseEntity<?> cadastra(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriBuilder) { 
+	Proposta proposta = propostaRequest.convertePropostaRequestParaProposta(); propostaRepository.save(proposta); 
+URI uri = uriBuilder.path("/proposta/{id}").buildAndExpand(proposta.getId()).toUri(); 
+return ResponseEntity.created(uri).body(new PropostaResponse(proposta));
+}

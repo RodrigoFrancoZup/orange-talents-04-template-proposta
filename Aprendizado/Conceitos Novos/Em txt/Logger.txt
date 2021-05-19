@@ -1,0 +1,75 @@
+Vamos adicionar Log na nossa aplicação, para nos ajudar a achar erros/bug:
+
+⦁	 O Spring utiliza Logback por padrão, estando na classe chamada Exemplo e desejas utilzar o log nessa calsse, temos que fazer: 
+	private final Logger logger = LoggerFactory.getLogger(Exemplo.class);
+
+⦁	Tipo de log (maneiras de "printar o log"):
+	logger.info("Log de informação"); 
+	logger.warn("Log de aviso, algo está errado ou faltando! cuidado!"); 
+	logger.error("Log de erro, algo de errado aconteceu!");
+	 logger.debug("Log de depuração, contém informações mais refinadas, que são mais úteis para depurar um aplicativo"); 
+	logger.trace("Log de rastreabilidade, contém informações mais refinadas do que o DEBUG");
+
+⦁	Poderiamos configurar para o Log ser mostrado no formato Json. Basta colocar os imports necessários:
+<properties>
+    <!-- Omitidas outras propriedades -->
+    <ch.qos.logback.version>1.2.3</ch.qos.logback.version>
+</properties>
+
+<dependencyManagement>
+    <dependencies>
+        <!-- Omitidas outras dependências -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-access</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+      <groupId>net.logstash.logback</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <version>6.4</version>
+    </dependency>
+</dependencies>
+
+⦁	Agora que está tudo configurado, precisamos adicionar o seguinte arquivo logback-spring.xml na pasta /src/main/resources/
+Conteudo:
+<configuration>
+
+  <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <timestamp/>
+        <version/>
+        <loggerName/>
+        <threadName/>
+        <logLevel/>
+        <mdc/>
+        <message/>
+        <stackTrace/>
+      </providers>
+    </encoder>
+  </appender>
+
+  <logger name="jsonLogger" additivity="false" level="DEBUG">
+    <appender-ref ref="consoleAppender"/>
+  </logger>
+
+  <root level="INFO">
+    <appender-ref ref="consoleAppender"/>
+  </root>
+
+</configuration>

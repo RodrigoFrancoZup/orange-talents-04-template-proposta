@@ -1,0 +1,57 @@
+⦁	Primeiro passo foi criar a receita de bolo da imagem de minha API, ou seja, o Dockerfile da aplicação (do banco não criei a imagem, pois vou usar a imagem oficial do mysql, logo posso chamá-la direto no docker-compose):
+
+	FROM adoptopenjdk/openjdk11:alpine 
+	RUN addgroup -S spring && adduser -S spring -G spring USER spring:spring 
+	ARG JAR_FILE=target/*.jar 
+	COPY ${JAR_FILE} app.jar 	
+	ENTRYPOINT ["java","-jar","/app.jar"] 
+	EXPOSE 8080
+
+	Do jeito que estou fazendo ficará sob minha responsabilidade criar o JAR da API, depois que eu gerar o JAR o mesmo será copiado para imagem (container).
+
+⦁	Gerando o JAR da aplicação pulando os testes: 
+	mvn clean package -DskipTests
+
+⦁	Depois de já ter a imagem e gerado o JAR da aplicação eu posso subir os containers. Para subi-los vou usaro docker-compose. Os serviços ficaram assim:
+
+mysql:
+  image: mysql
+  command: --default-authentication-plugin=mysql_native_password
+  container_name: mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: mysql
+    MYSQL_DATABASE: proposta
+  ports:
+    - "3307:3306"
+
+proposta:
+  build:
+    dockerfile: Dockerfile
+    context: .
+  image: rodrigofrancozup/proposta
+  container_name: proposta
+  ports:
+    - "8081:8080"
+  depends_on:
+    - "mysql"
+  restart: always
+  environment:
+    MYSQL_URL: jdbc:mysql://mysql:3306/proposta
+    CONTAS_URL: contas:8888
+    ANALISE_URL: analise:9999
+
+⦁	Comandos do docker utilizado:
+	docker-compose up -d	--> Vai subir os containers (serviços) e se um container tiver subindo pela primeira vez ele vai buildar a imagem do container;
+
+	docker-compose up -d --build	--> Vai subir os containers (serviços) e forçar a construção da imagem novamente dos containers, importante caso tenhamos alterado algum dockerfile;
+
+	docker-compose down	--> Vai derrubar os containers (serviços);
+
+	docker container prune	--> Vai deletar todas imagens dos containers parados;
+
+⦁	Entendendo as portas do docker. Quando crio o serviço do Mysql e mapeio a porta para "3307:3306" eu estou dizendo o seguinte: O meu pc real  para acessar o mysql terá que usar a porta 3307 (por exemplo meu Workbench), mas as aplicações que estão dockerizadas, rodando na mesma rede (dentro do coker) vão utilizar a porta 3306 para acessar o mysql.
+
+⦁	Entendendo os endereços ip's. Quando estou no meu pc já sei qual a porta usar, e o ip será qual? Por padrão será o localhost:port, agora se for aplicação dockerizada querendo acessar outra aplicação dockerizada o ip será outro, podemos pegar esse ip dentro do docker vendo em qual rede estão, ou então usar o nome do próprio serviço, por exemplo: minha api dockerizada acessando o mysql dockerizado, o endereço do banco de dados ficaria: http://mysql:3306/proposta
+
+⦁	Lembre-se, se você dockerizou as aplicações, os endereços vão mudar (endereço de banco de dados, dos clientes do Feign, outros..)!!! Utilize Spring Expression Language caso queria deixar o app configurado para executar no docker e localmente!
+

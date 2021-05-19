@@ -1,0 +1,13 @@
+Nesse projeto usamos o Docker:
+
+⦁	Inicialmente fiz o Download do arquivo docker-compose.yaml que nos foi indicado;
+
+⦁	Para subir os containers: docker-compose -d (isso na pasta que o arquivo docker-compose.yaml se encontra);
+
+⦁	Para listar os containers rodando: docker-compose -ps
+
+⦁	Acessar o banco de dados que está rodando em um container (sabmos que usuario é keycloak e senha password. Há duas maneiras:
+1.	Acessando o container que já está rodando, vinculando o terminal dele com o meu: docker container exec -it orange-talents-04-template-proposta_postgres_1 psql -U keycloak (aqui passamos o nome do container, podeira ser o ID);
+2.	Sabendo que esse container tem uma porta aberta (5432) e que está na nossa rede local (localhost), podemos acessá-lo em nosso terminal com o comando: psql -h localhost -p 5432 -U keycloak   - após isso a senha será perguntada. Para esse modo funcionar temos que ter o postgressql instalado e a variavel de ambiente psql estar configurada;
+	Obs: estando logado, podemos rodar o comando \l que lista as basses de dados.
+		

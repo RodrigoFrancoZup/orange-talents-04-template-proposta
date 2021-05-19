@@ -1,0 +1,18 @@
+⦁	O ideal é usar variaveis de ambiente para passar a URL aos clients do Foreign, pois se mudar o endereço  de um serviço externo ficará mais fácil atualizar nosso código. Para isso vamos colocar as variaveis e seus valores no arquivo application.properties e nos client usar só a variavel;
+
+⦁	No arquivo application.properties criar: 
+	financeiro.host=http://localhost:9999
+	cartoes.host=http://localhost:8888
+
+⦁	Agora a interface do client do Foreign ficará assim:
+	 @FeignClient(name = "cartoes", url = "${cartoes.host}")
+	 public interface CartaoClient {
+		//Restante do Código aqui;
+	}
+
+⦁	Ao aplicar o Spring Expression Language ficou assim:
+# Feign Config:
+financeiro.host=${ANALISE_URL:http://localhost:9999}
+cartoes.host=${CONTAS_URL:http://localhost:8888}
+
+	Agora ocorre um If. A variável financeiro.host vai receber o valor da variável de ambiente ANALISE_URL, caso ninguem passe esse valor, financeiro.host receberá localhost:9999

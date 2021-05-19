@@ -1,0 +1,13 @@
+⦁	Para isso basta criar uma classe, no caso chamei de MeuHealthCehck e implementar a interface HealthIndicator (por consequencia implementar seus métodos);
+⦁	No método health fazer:
+@Override
+public Health health() {
+    Map<String, Object> details = new HashMap<>();
+    details.put("versão", "1.0");
+    details.put("descrição", "Meu primeiro Health Check customizado! - API Prosposta.");
+    details.put("endereço", "127.0.0.1");
+    return Health.status(Status.UP).withDetails(details).build();
+
+}
+
+Nesse exemplo estou colocando a versao da minha api e uma breve descrição, mas eu poderia ter uma logica para verificar se o serviço estava funcionando. Poderia fazer uma outra classe quaqluer implementar essa interface.

@@ -1,0 +1,55 @@
+⦁	O sistema de Proposta vai se comportar como Resource Server, uma das entidades do OAuth;
+
+⦁	Dependências necessárias do Spring Security para implementar isso (colocá-las no arquivo application.properties):
+
+	<dependency>
+   		 <groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+	</dependency>
+
+	<dependency>
+   		 <groupId>org.springframework.security</groupId>
+   		 <artifactId>spring-security-oauth2-jose</artifactId>
+	</dependency>
+
+A primeira dependência nos ajuda a configurar nossa aplicação como Resource Server, já na segunda dependência configuramos o Spring Framework para interações com Tokens JWT, essa lib nos ajudar a "abrir" o token e manipulá-lo com classes java, o que nos ajuda muito!
+
+⦁	Agora devemos indicar quem é nosso emissor de Token e o endereço onde podemos encontrar as chaves e algoritmo para validar nossos tokens JWT (É O KEYCLOAK). No arquivo application.properties colocar:
+
+## spring security resource server configuration
+spring.security.oauth2.resourceserver.jwt.issuer-uri=${KEYCLOAK_ISSUER_URI:http://localhost:18080/auth/realms/nosso-cartao}
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri=${KEYCLOAK_JWKS_URI:http://localhost:18080/auth/realms/nosso-cartao/protocol/openid-connect/certs}
+
+A primeira configuração spring.security.oauth2.resourceserver.jwt.issuer-uri nos ajuda informar onde o Spring Security pode encontrar nosso authorization server. Essa informação é muito importante!
+Já nossa segunda configuração spring.security.oauth2.resourceserver.jwt.jwk-set-uri, indicamos aonde o Spring Security pode encontrar as chaves para conseguir validar a assinatura do token.
+Em ambos estou usando o Spring Expression Language. Quando subir minha API para o docker eu devo passar as variaveis de ambiente: KEYCLOAK_ISSUER_URI e KEYCLOAK_JWKS_URI;
+
+⦁	Agora temos que fazer com que o Spring Boot autorize nossas requisições de acordo com o token recebido e com base em seus dados permitir o processamento da requisição ou bloquear a mesma:
+
+1) Criar a classe SecurityConfiguration, essa deve ser anotada com @Configuration e herdar (extends) WebSecurityConfigurerAdapter;
+2) Implementar o método configure(HttpSecurity http);
+3) Resultado final será:
+
+@Configuration
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests(authorizeRequests ->
+                        authorizeRequests
+                                .antMatchers(HttpMethod.GET, "/api/propostas/**").hasAuthority("SCOPE_meu-primeiro-escopo")
+                                .antMatchers(HttpMethod.GET, "/api/cartoes/**").hasAuthority("SCOPE_meu-primeiro-escopo")
+                                .antMatchers(HttpMethod.POST, "/api/cartoes/**").hasAuthority("SCOPE_meu-primeiro-escopo")
+                                .antMatchers(HttpMethod.POST, "/api/propostas/**").hasAuthority("SCOPE_meu-primeiro-escopo")
+                                .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+    }
+}
+⦁	Na classe do item anterior, utilize o import do spring web;
+
+⦁	Note que a nossa API proposta (/api/propostas/**)  esta protegiada por uma regra hasAuthority("SCOPE_meu-primeiro-escopo"), o token repassado deve conter a claim SCOPE_meu-primeiro-escopo, caso contrário a requisição será negada. Esse SCOPE nós criamos no Keycloak
+
+⦁	Uma informação bastante importante aqui as claims do token JWT se tornam Roles no Spring Security!!
+
+⦁	Outra informação importante: você não precisa necessariamente usar os scopes do seu JWT, voce utilizar alguma custom claim para validá-lo, não há nenhuma restrição em usar uma claim especifica utilizamos scope por acharmos mais indicado para nosso caso, mas atente-se as necessidades do seu projeto.

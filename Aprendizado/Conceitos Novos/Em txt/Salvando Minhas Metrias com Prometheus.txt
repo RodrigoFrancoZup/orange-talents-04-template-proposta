@@ -1,0 +1,65 @@
+⦁	O docker-compose deve estar rodando;
+⦁	Acessar o http://localhost:9090/
+⦁	Primeiro vamos ver o que é prometheus, no fim desse aquivo tem COMO implementá-lo;
+Poderemos ver que a tela do prometheus é bastante "pobrezinha", não vamos encontrar muitas opções, afinal esta é uma ferramenta para monitoramento.
+Temos alguns menus na barra que são muito importante para checarmos as configurações do prometheus, as configurações relacionados ao sistema estão no menu Status, uma parte importante legal é que o prometheus também conta com um sistema de alertas que pode ser instalado junto a solução, as configurações de alertas estão no menu Alertas, atente-se que o módulo deve estar instalado.
+Outra parte importante na parte central da tela, é o combo para seleção das métricas, neste combo todas as métricas que os sistemas conectados ao prometheus estão listadas, perceba que precisamos trabalhar com bastante rigor nas nomenclaturas das métricas.
+
+⦁	Explorando o menu Status
+O menu Status é um menu que conta com diversos sub-menus relacionados a configuração do prometheus, podemos encontrar a versão do sistema, configurações de runtime, os parâmetros de inicialização da ferramentas entre outras informações.
+Os pontos bastante importante relacionados à coleta de métricas são Targets e Service Discovery, estes são relacionados à como o prometheus está operando em relação a obtenção dos valores da métricas.
+Vamos entender isso agora!
+
+Targets
+Targets são "alvos", no nosso contexto são os nossos sistemas que estão configurados para que o prometheus faça a coleta das métricas. Essas configurações são realizadas através do arquivo de configuração prometheus.yaml, mas este pode ser um trabalho de infra, para nosso contexto basta entendermos que precisamos avisar o prometheus que ele precisa buscar métricas.
+Essa tela nos ajuda bastante a entender como estão nossos sistemas em relação ás coletas, ela mostra se o endpoint de coleta está ok, e podemos ver informações da última coleta e quanto tempo demorou. Quando há erro também conseguimos identificar o motivo.
+Então esta tela nos ajuda muito, vale a pena lembrar dela....algum momento ela pode te salvar!
+Olha que legal, com um simples olhar já podemos perceber que nosso sistema de contas está com problema, olhe o campo State está marcado como DOWN, neste caso precisaríamos dar uma olhada nele.
+Também temos algumas informações sobre atributos do sistema também como endpoint de coleta e IPs por exemplo
+
+Service Discovery
+Service Discovery é a maneira que o prometheus vai usar para descobrir seus serviços, no nosso ambiente de desenvolvimento informamos esses os serviços arbitrariamente, mas imagine quando nossos sistemas tiverem dezenas de instâncias ou talvez milhares, já pensou em cada nova instância tivermos que informar o prometheus, esta tarefa se tornaria inviável. Para isto o prometheus é capaz de se conectar com implementações de Service Discovery mais usadas no mercado como kubernetes e Consul por exemplo. Essas implementações são capazes de fornecer informações das instâncias para o prometheus.
+Olha que massa hein!
+Olha que legal, o prometheus é capaz de agrupar nossos targets por "nomes" e ainda mais consegue contá-los isso é muito útil quando contamos com algumas instâncias de um mesmo serviço! Também é possível saber como eles foram descobertos, note que ele consegue mostrar as labels descobertas e as labels do "alvo".
+
+⦁	Fazendo uma consulta de Métrica:
+Na home do prometheus escolha uma métrica qualquer e depois clique na tab Graph.
+Veja no exemplo, escolhemos a métrica de coletas de log do logback por nível. Cada linha de log é um evento, essa métrica visa mostrar quantos deles utilizamos.
+Nome da métricas:
+transacoes_logback_events_total
+Olha que legal, parece que nossas métricas estão sendo armazenadas corretamente. Sucesso!
+Quer dizer mais ou menos sucesso, na verdade colocamos métricas mas parece que esse gráfico do prometheus tem algumas limitações. Não consigo criar agregações e "juntar" métricas, e é por isso que outra ferramenta aparece em cena. O Grafana é uma ferramenta feita para renderizar gráficos e adivinha ele tem uma fortíssima integração com o prometheus...
+
+⦁	Como configurar minha aplicação no Prometheus?
+1.	Ter em mente que Target é onde o Prometheus vai coletar a métrica;
+2.	Parar o serviço do Prometheus, ele está rodando no docker e precisamos parar: docker-compose -f docker-compose.yaml stop prometheus;
+3.	Vamos criar o arquivo prometheus.yml com o conteudo:
+ 
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+scrape_configs:
+
+  - job_name: 'proposta'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+      #- targets: ['localhost:8080']
+
+Aqui eu comentei o segundo target, pois precisamos pegar o localhost da máquina real, da nossa maquina, pois como estamos no docker se der localhost ele irá pegar o ip do container do docker.
+
+4.  Alterar o serviço do Prometheus, ou seja, alterar no arquivo docker-compose o serviço Prometheis, ele vai ficar assim:
+
+prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-volume:/etc/prometheus/
+    network_mode: host
+    expose:
+      - 9090
+
+5. Agora basta levantar o serviço novamente e visitar o serviço do prometheus pelo navegador e verificar se nos targes está aparecendo nossa aplicação.
+
+⦁	Vou criar o resumo de como adicionar o Grafana no Projeto!

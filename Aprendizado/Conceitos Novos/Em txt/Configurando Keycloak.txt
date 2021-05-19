@@ -1,0 +1,49 @@
+Keycloak:
+⦁	Login no serviço do Keycloak:
+1) Acessei o link http://localhost:18080/auth/ (estou com o serviço rodando via Docker);
+2) Clique em administration console e loguei com: admin / Pa55w0rd
+
+⦁	Criando local para colocar permissoes, esse espaço se chama Realm:
+1) Passar mouse em cima da palvra Master -> Clicar no botão add realm;
+2) Em Name colocar: nosso-cartao -> Clicar em Create;
+
+⦁	Criando usuários (esse vão fazer logins na plataforma):
+1) Verificar se o Realm selecionado é o nosso-cartao;
+2) No menu ir em Manage -> selecionar Users -> Clicar em Add User
+3) Criar o usuário,  por exemplo vamos criar o joão, preencher os campos: Username = joao, Email = joao@joao.com, First Name = Joao, Last Name = Santos, User Enabled e Email verified devem ficar ligados. -> Clicar no botão Save.
+4) Ir para aba Credentials para criarmos a senha, basta digitar no campo Password a senha do usuárioe no campo inferior confirmar a mesma -> Desligar o Temporary -> Clicar no botão Set Password.
+
+⦁	Vamos agora criar os clientes (Por exemplo os navegadores):
+1) No menu ir em Clients -> clicar no botão Create -> no campo Client Id colocar o nome minha-aplicacao -> clicar no botão Save;
+2) Ocorrerá um redirecionamento para configuramos com mais detalhes o nosso cliente, por enquanto podemos deixar como está (o mais importante são os tipos de concessão)
+
+⦁	Vamos agora criar Escopo (exemplo: Somente quem tem o escopo ADMIM pode ver X,Y,Z página):
+
+1)No menu ir em Client Scopes -> Create -> no campo Name colocar o nome do escopo, vamos pôr nesse caso meu-primeiro-escopo -> clicar no botão Save;
+2) Devemos associar o escopo em nossa aplicação. Ir no menu Clients -> escolher nossa aplicação, no caso minha-aplicacao e clicar nele -> Ir na aba Client Scopes -> Na caixa Default Client Scopes devemos selecionar o escopo desejado, no caso meu-primeiro-escopo -> clicar no botão Add selected
+3) Para testar podemos fazer a requisição (Keycloak tem que ta rodando no docker):
+curl --location --request POST 'http://localhost:18080/auth/realms/nosso-cartao/protocol/openid-connect/token' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'grant_type=password' \
+--data-urlencode 'username=luramarchanjo' \
+--data-urlencode 'password=3`!!z[MVGxuJB2>Y' \
+--data-urlencode 'client_id=nosso-cartao-client' \
+--data-urlencode 'client_secret=1610ed88-3a65-45ab-950a-c856f9ee17d2' \
+--data-urlencode 'scope=proposal:read proposal:write'
+
+O response tem que vir com Token!
+
+⦁	No Postman para gerar o token devemos usar o verbo Post, url: http://localhost:18080/auth/realms/nosso-cartao/protocol/openid-connect/token em body selecionar o  x-www-form-urlencoded e em cada atributo colocar: username | rodrigo e assim por diante. Entendendo esses atributos:
+	grant_type = password
+	username = rodrigo (usuario que eu criei no keycloak)
+	password = adminrfl (senha do usuario que criei no keycloak)
+	client_id = minha-aplicacao (nome do client que criei no keycloak)
+	client_secret = blablabla (qualquer coisa)
+	scope = meu-primeiro-scope (nome do escopo que eu criei no keycloak) esse campo tem que bater com o SCOPE dentro da classe SecurityConfiguration, lá será SCOPE_meu-primeiro-scope
+
+5)Agora que temos o token é preciso fornecer o mesmo nas APIs que requerem autenticação! Para passar o token nas APIs que requerem autenticação é preciso enviar o Header denominado Authorization com o o valor do access_token com o prefixo Bearer!
+
+⦁	Agora falta implementar o Resource Server - O Spring traz um módulo (dependência para isso). Vou criar um resumo para esse assunto, para esse aqui não ficar grande. Procurar o resumo Resource Server com Srping.
+
+OBS: Se você está utilizando Windows e estiver com problema de gerar token, por favor, tente criar um realm sem a utilização do hyphen.
+

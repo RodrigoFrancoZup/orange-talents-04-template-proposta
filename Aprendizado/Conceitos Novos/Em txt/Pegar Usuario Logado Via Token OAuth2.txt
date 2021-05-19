@@ -1,0 +1,10 @@
+⦁	Basta na assinatura de um método da classe controller ter: @AuthenticationPrincipal Jwt usuario
+Exemplo:
+
+public ResponseEntity<?> test (@AuthenticationPrincipal Jwt usuario){
+var email = usuario.getClaimns().get("email");
+}
+
+⦁	Outro jeito é: 
+Jwt token2 = (Jwt) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+System.out.println(token2.getClaims().get("email"));
