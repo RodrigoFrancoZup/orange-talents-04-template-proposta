@@ -46,9 +46,7 @@ public class PropostaController {
     public ResponseEntity<?> cadastra(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriBuilder) {
         Span activeSpan = tracer.activeSpan();
         activeSpan.setTag("user.email", propostaRequest.getEmail());
-
         activeSpan.setBaggageItem("user.email", propostaRequest.getEmail());
-
         activeSpan.log("Meu log personalizado - Rodrigo");
 
         Proposta proposta = propostaRequest.convertePropostaRequestParaProposta();

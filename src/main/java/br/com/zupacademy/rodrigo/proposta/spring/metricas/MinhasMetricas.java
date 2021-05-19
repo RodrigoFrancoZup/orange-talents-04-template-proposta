@@ -16,9 +16,6 @@ public class MinhasMetricas {
 
     private final MeterRegistry meterRegistry;
 
-    @Autowired
-    private PropostaController propostaController;
-
     public MinhasMetricas(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
     }

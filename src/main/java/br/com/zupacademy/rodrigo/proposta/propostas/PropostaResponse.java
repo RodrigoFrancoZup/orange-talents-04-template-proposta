@@ -1,5 +1,8 @@
 package br.com.zupacademy.rodrigo.proposta.propostas;
 
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+
 import java.math.BigDecimal;
 
 public class PropostaResponse {
@@ -58,4 +61,6 @@ public class PropostaResponse {
     public String getNumeroCartao() {
         return numeroCartao;
     }
+
+
 }

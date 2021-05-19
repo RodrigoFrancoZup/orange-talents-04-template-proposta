@@ -1,6 +1,8 @@
 package br.com.zupacademy.rodrigo.proposta.propostas;
 
 import br.com.zupacademy.rodrigo.proposta.cartoes.Cartao;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -36,6 +38,7 @@ public class Proposta {
         this.nome = nome;
         this.endereco = endereco;
         this.salario = salario;
+        criptografiaDoDocumento();
     }
 
     public Long getId() {
@@ -62,7 +65,9 @@ public class Proposta {
         return salario;
     }
 
-    public StatusProposta getStatus() { return status; }
+    public StatusProposta getStatus() {
+        return status;
+    }
 
     public Cartao getCartao() {
         return cartao;
@@ -74,5 +79,12 @@ public class Proposta {
 
     public void setCartao(Cartao cartao) {
         this.cartao = cartao;
+    }
+
+
+    public void criptografiaDoDocumento(){
+        TextEncryptor encryptor = Encryptors.queryableText("senha123", "5c0744940b5c369c");
+        String documentoProtegido = encryptor.encrypt(this.documento);
+        this.documento = documentoProtegido;
     }
 }
